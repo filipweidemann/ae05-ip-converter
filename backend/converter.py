@@ -23,7 +23,10 @@ def convert_basic_values(header, binary=False):
 
     for key, value in header.items():
         if key == 'source' or key == 'destination':
-            pass
+            if not binary:
+                converted[key] = convert_ip_to_binary(header[key])
+            else:
+                converted[key] = convert_ip_to_string(header[key])
         else:
             if not binary:
                 converted[key] = bin(int(value))[2:]
