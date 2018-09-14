@@ -60,13 +60,13 @@ def calculate_checksum(header, binary=False):
 
     if not binary:
         for key, value in header.items():
-            if key == 'checksum':
+            if key == 'checksum' or key == 'source' or key == 'destination':
                 pass
             else:
                 bin_values.append(bin(int(value)))
     else:
         for key, value in header.items():
-            if key == 'checksum':
+            if key == 'checksum' or key == 'source' or key == 'destination':
                 pass
             else:
                 bin_values.append(value)
