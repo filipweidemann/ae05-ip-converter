@@ -3,25 +3,35 @@
     <v-slide-y-transition mode="out-in">
       <v-layout column align-center>
         <v-form ref="form" v-model="valid" lazy-validation>
+
           <v-text-field
-            v-model="name"
-            :rules="nameRules"
-            :counter="10"
-            label="Name"
+            v-model="version"
+            :counter="1"
+            label="Version"
+            required
+            disabled
+          ></v-text-field>
+
+          <v-text-field
+            v-model="tos"
+            label="TOS"
+            required
+            disabled
+          ></v-text-field>
+
+          <v-text-field
+            v-model="source"
+            :counter="15"
+            label="Source IP"
             required
           ></v-text-field>
+
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
-            label="E-mail"
+            v-model="destination"
+            :counter="15"
+            label="Destination IP"
             required
           ></v-text-field>
-          <v-checkbox
-            v-model="checkbox"
-            :rules="[v => !!v || 'You must agree to continue!']"
-            label="Do you agree?"
-            required
-          ></v-checkbox>
       
           <v-btn
             :disabled="!valid"
@@ -41,6 +51,16 @@ import api from '@/api'
 
 export default {
   name: 'CConverter',
+
+  data () {
+    return {
+      valid: true,
+      version: '4',
+      tos: '24',
+      source: '',
+      destination: ''
+    }
+  },
 
   methods: {
     submitForm () {
