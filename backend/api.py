@@ -1,10 +1,12 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
+from flask_cors import CORS
 from converter import convert_ip_to_binary, convert_ip_to_string, is_valid_ip_binary, \
     is_valid_ip_string, calculate_checksum, convert_basic_values
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 
 class ConvertToString(Resource):
     def post(self):
