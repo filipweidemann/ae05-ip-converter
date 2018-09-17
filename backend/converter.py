@@ -62,7 +62,9 @@ def calculate_checksum(header, binary=False):
 
     if not binary:
         for key, value in header.items():
-            if key == 'checksum':
+            if key == 'flags':
+                bin_values.append(header[key])
+            elif key == 'checksum':
                 pass
             elif key == 'source' or key == 'destination':
                 bin_address = textwrap.wrap(convert_ip_to_binary(header[key]), 8)
@@ -83,6 +85,5 @@ def calculate_checksum(header, binary=False):
 
     partial = bin(sum([int(value, 2) for value in bin_values]))
     checksum_unflipped = partial[2:] + partial
+
     return int(''.join('1' if x == '0' else '0' for x in str(checksum_unflipped)))
-
-
