@@ -28,7 +28,9 @@ def convert_basic_values(header, binary=False):
             else:
                 converted[key] = convert_ip_to_string(header[key])
         else:
-            if not binary:
+            if key == 'flags':
+                converted[key] = header[key]
+            elif not binary:
                 converted[key] = bin(int(value))[2:]
             else:
                 converted[key] = int(value, 2)
@@ -60,14 +62,22 @@ def calculate_checksum(header, binary=False):
 
     if not binary:
         for key, value in header.items():
-            if key == 'checksum' or key == 'source' or key == 'destination':
+            if key == 'checksum':
                 pass
+            elif key == 'source' or key == 'destination':
+                bin_address = textwrap.wrap(convert_ip_to_binary(header[key]), 8)
+                for octet in bin_address:
+                    bin_values.append(octet)
             else:
                 bin_values.append(bin(int(value)))
     else:
         for key, value in header.items():
-            if key == 'checksum' or key == 'source' or key == 'destination':
+            if key == 'checksum':
                 pass
+            elif key == 'source' or key == 'destination':
+                str_address = convert_ip_to_string(header[key]).split('.')
+                for octet in str_address:
+                    bin_values.append(octet)
             else:
                 bin_values.append(value)
 

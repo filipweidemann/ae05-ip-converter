@@ -10,7 +10,7 @@ CORS(app)
 
 class ConvertToString(Resource):
     def post(self):
-        form = request.form
+        form = request.get_json()
         converted = {}
 
         checksum = calculate_checksum(form, binary=True)
@@ -23,7 +23,7 @@ class ConvertToString(Resource):
 
 class ConvertToBinary(Resource):
     def post(self):
-        form = request.form
+        form = request.get_json()
         converted = {}
 
         checksum = calculate_checksum(form, binary=False)
