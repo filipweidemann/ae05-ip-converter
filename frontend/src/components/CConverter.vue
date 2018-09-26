@@ -8,12 +8,18 @@
             v-model="binaryInput"
           ></v-switch>
 
-          <div v-if="!binaryInput">
-            <c-form-string @converted="displayResponse"/>
+          <div v-show="!binaryInput">
+            <c-form-string 
+              @converted="displayResponse"
+              ref="stringForm"
+            />
           </div>
           
-          <div v-else-if="binaryInput">
-            <c-form-binary @converted="displayResponse"/>
+          <div v-show="binaryInput">
+            <c-form-binary 
+              @converted="displayResponse"
+              ref="binaryForm"
+            />
           </div>
 
           {{ response }}
@@ -45,8 +51,13 @@ export default {
 
   methods: {
     displayResponse (response) {
-      let stringified = `${response.version} - ${response.ihl} - ${response.tos} - ${response.packet_length} - ${response.flags} - ${response.offset} - ${response.ttl}`
-      this.response = stringified
+      if (response.binary) {
+        this.binaryInput = true
+        this.$refs.binaryForm.initializeData(response)
+      } else {
+        this.binaryInput = false
+        this.$refs.stringForm.initializeData(response)
+      }
     }
   }
 }

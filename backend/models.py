@@ -1,7 +1,7 @@
 import textwrap
 from exceptions import InvalidIp, InvalidBinary
 
-class IPv4Header:
+class IPHeader:
     def __init__(
             self,
             version,
@@ -25,6 +25,9 @@ class IPv4Header:
         self.source = source
         self.destination = destination
         self.binary = binary
+        self.checksum = ''
+        self.ihl = ''
+        self.packet_length = ''
 
     def validate_ip_fields(self):
         if self.binary:
@@ -48,6 +51,32 @@ class IPv4Header:
 
             return True
 
+    def calculate_checksum(self):
+        header = self.get_binary_header()
+
+        values = [value for key, value in header.items()]
+
+        partial = bin(sum([int(value, 2) for value in values]))
+        checksum_unflipped = partial[2:] + partial
+
+        self.checksum = int(''.join('1' if x == '0' else '0' for x in str(checksum_unflipped)))
+
+    def calculate_ihl(self):
+        if self.binary:
+            self.ihl = '5'
+
+        else:
+            self.ihl = '101'
+
+
+    def calculate_packet_length(self):
+        if self.binary:
+            self.packet_length = '5'
+
+        else:
+            self.paket_length = '101'
+
+
     def convert_ip(self):
         addresses = {}
 
@@ -67,6 +96,37 @@ class IPv4Header:
             addresses['destination'] = ''.join([bin(int(x) + 256)[3:] for x in self.destination.split('.')])
             return addresses
 
+    def get_binary_header(self):
+        header = {}
+
+        if not self.binary:
+            header['version'] = bin(int(self.version))[2:]
+            header['tos'] = bin(int(self.tos))[2:]
+            header['identifier'] = bin(int(self.identifier))[2:]
+            header['flags'] = bin(int(self.flags, 2))[2:]
+            header['offset'] = bin(int(self.offset))[2:]
+            header['ttl'] = bin(int(self.ttl))[2:]
+            header['protocol'] = bin(int(self.protocol))[2:]
+
+            ip_addresses = self.convert_ip()
+            header['source'] = ip_addresses['source']
+            header['destination'] = ip_addresses['destination']
+
+            return header
+
+        if self.binary:
+            header['version'] = self.version
+            header['tos'] = self.tos
+            header['identifier'] = self.identifier
+            header['flags'] = self.flags[1:]
+            header['offset'] = self.offset
+            header['ttl'] = self.ttl
+            header['protocol'] = self.protocol
+            header['source'] = self.source
+            header['destination'] = self.destination
+
+            return header
+
 
     def convert(self):
         if self.binary:
@@ -83,58 +143,102 @@ class IPv4Header:
             source = ip_addresses['source']
             destination = ip_addresses['destination']
 
-            return {
-                'version': version,
-                'tos': tos,
-                'identifier': identifier,
-                'flags': flags,
-                'offset': offset,
-                'ttl': ttl,
-                'protocol': protocol,
-                'source': source,
-                'destination': destination
-            }
+            if not self.checksum:
+                self.calculate_checksum()
+
+            if not self.ihl:
+                self.calculate_ihl()
+
+            if not self.packet_length:
+                self.calculate_packet_length()
+
+            checksum = self.checksum
+            ihl = self.ihl
+            packet_length = self.packet_length
+
+            header = IPHeader(
+                version=version,
+                tos=tos,
+                identifier=identifier,
+                flags=flags,
+                offset=offset,
+                ttl=ttl,
+                protocol=protocol,
+                source=source,
+                destination=destination,
+                binary=not self.binary
+            )
+
+            header.checksum = checksum
+            header.ihl = ihl
+            header.packet_length = packet_length
+
+            return header
 
         elif not self.binary:
-            version = bin(int(self.version))
-            tos = bin(int(self.tos))
-            identifier = bin(int(self.identifier))
+            version = bin(int(self.version))[2:]
+            tos = bin(int(self.tos))[2:]
+            identifier = bin(int(self.identifier))[2:]
             flags = self.flags
-            offset = bin(int(self.offset))
-            ttl = bin(int(self.ttl))
-            protocol = bin(int(self.protocol))
+            offset = bin(int(self.offset))[2:]
+            ttl = bin(int(self.ttl))[2:]
+            protocol = bin(int(self.protocol))[2:]
 
             ip_addresses = self.convert_ip()
 
             source = ip_addresses['source']
             destination = ip_addresses['destination']
 
-            return {
-                'version': version[2:],
-                'tos': tos[2:],
-                'identifier': identifier[2:],
-                'flags': flags,
-                'offset': offset[2:],
-                'ttl': ttl[2:],
-                'protocol': protocol[2:],
-                'source': source[2:],
-                'destination': destination[2:]
-            }
+            if not self.checksum:
+                self.calculate_checksum()
+
+            if not self.ihl:
+                self.calculate_ihl()
+
+            if not self.packet_length:
+                self.calculate_packet_length()
+
+            checksum = self.checksum
+            ihl = self.ihl
+            packet_length = self.packet_length
+
+            header = IPHeader(
+                version=version,
+                tos=tos,
+                identifier=identifier,
+                flags=flags,
+                offset=offset,
+                ttl=ttl,
+                protocol=protocol,
+                source=source,
+                destination=destination,
+                binary=not self.binary
+            )
+
+            header.checksum = checksum
+            header.ihl = ihl
+            header.packet_length = packet_length
+
+            return header
 
 
 if __name__ == '__main__':
-    header = IPv4Header(
-        version='100',
-        tos='1100101',
+    header = IPHeader(
+        version='4',
+        tos='0',
         identifier='0',
         flags='010',
         offset='0',
-        ttl='10000000',
+        ttl='128',
         protocol='0',
-        source='00000001000000010000000100000001',
-        destination='00000001000000010000000100000010',
-        binary=True
+        source='1.1.1.1',
+        destination='1.1.1.2',
+        binary=False
     )
 
+    checksum = header.calculate_checksum()
+    ihl = header.calculate_ihl()
+
     converted = header.convert()
-    print(converted)
+
+    print(converted.checksum)

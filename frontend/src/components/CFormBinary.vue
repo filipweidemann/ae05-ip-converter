@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-form ref="form" v-model="valid" lazy-validation>
+    <v-form ref="form" class="header-form" v-model="valid" lazy-validation>
       <v-text-field
         v-model="header.version"
         :counter="3"
@@ -67,6 +67,12 @@
         required
       ></v-text-field>
 
+      <v-text-field
+        v-model="header.checksum"
+        label="Checksum"
+        disabled
+      ></v-text-field>
+
       <v-btn
         :disabled="!valid"
         @click="submitForm"
@@ -99,7 +105,8 @@ export default {
         ttl: '10000000',
         protocol: '0',
         source: '',
-        destination: ''
+        destination: '',
+        checksum: ''
       } 
     }
   },
@@ -108,11 +115,25 @@ export default {
     submitForm () {
       this.$api.post('convert-to-string', this.header)
         .then(response => {
+          console.log(response)
           this.$emit('converted', response.data)
         })
         .catch(err => {
           console.log(err)
         })
+    },
+
+    initializeData (data) {
+      this.header.version = data.version
+      this.header.tos = data.tos
+      this.header.identifier = data.identifier
+      this.header.flags = data.flags
+      this.header.offset = data.offset
+      this.header.ttl = data.ttl
+      this.header.protocol = data.protocol
+      this.header.source = data.source
+      this.header.destination = data.destination
+      this.header.checksum = data.checksum
     }
   }
 }
@@ -133,5 +154,9 @@ li {
 }
 a {
   color: #42b983;
+}
+
+.header-form {
+  width: 500px;
 }
 </style>
