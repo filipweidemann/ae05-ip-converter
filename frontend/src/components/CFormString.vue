@@ -115,7 +115,6 @@ export default {
     submitForm () {
       this.$api.post('convert-to-binary', this.header)
         .then(response => {
-          console.log(response.data)
           this.$emit('converted', response.data)
         })
         .catch(err => {
