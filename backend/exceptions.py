@@ -6,3 +6,5 @@ class InvalidIp(Exception):
     pass
 
 
+class MissingFields(Exception):
+    pass

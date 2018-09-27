@@ -1,4 +1,5 @@
 from models import IPHeader
+from exceptions import MissingFields
 
 def create_ip_header(data):
     required_fields = [
@@ -16,7 +17,7 @@ def create_ip_header(data):
 
     for key in required_fields:
         if not key in list(data.keys()):
-            raise Exception
+            raise MissingFields()
 
     return IPHeader(
             version=data['version'],

@@ -1,5 +1,6 @@
 import textwrap
 from exceptions import InvalidIp, InvalidBinary
+from flask import abort
 
 class IPHeader:
     def __init__(
@@ -42,7 +43,7 @@ class IPHeader:
             source_token_count = len(source_tokens)
             destination_token_count = len(destination_tokens)
 
-            if source_token_count != 4 and destination_token_count != 4:
+            if source_token_count != 4 or destination_token_count != 4:
                 raise InvalidIp()
 
             for octet in source_tokens + destination_tokens:
@@ -74,27 +75,29 @@ class IPHeader:
             self.packet_length = '5'
 
         else:
-            self.paket_length = '101'
+            self.packet_length = '101'
 
 
     def convert_ip(self):
         addresses = {}
+        try:
+            if self.binary and self.validate_ip_fields():
+                source_bytes = textwrap.wrap(self.source, 8)
+                destination_bytes = textwrap.wrap(self.destination, 8)
 
-        if self.binary and self.validate_ip_fields():
-            source_bytes = textwrap.wrap(self.source, 8)
-            destination_bytes = textwrap.wrap(self.destination, 8)
+                source_values = [str(int(byte, 2)) for byte in source_bytes]
+                destination_values = [str(int(byte, 2)) for byte in destination_bytes]
 
-            source_values = [str(int(byte, 2)) for byte in source_bytes]
-            destination_values = [str(int(byte, 2)) for byte in destination_bytes]
+                addresses['source'] = '.'.join(source_values)
+                addresses['destination'] = '.'.join(destination_values)
+                return addresses
 
-            addresses['source'] = '.'.join(source_values)
-            addresses['destination'] = '.'.join(destination_values)
-            return addresses
-
-        elif not self.binary and self.validate_ip_fields():
-            addresses['source'] = ''.join([bin(int(x) + 256)[3:] for x in self.source.split('.')])
-            addresses['destination'] = ''.join([bin(int(x) + 256)[3:] for x in self.destination.split('.')])
-            return addresses
+            elif not self.binary and self.validate_ip_fields():
+                addresses['source'] = ''.join([bin(int(x) + 256)[3:] for x in self.source.split('.')])
+                addresses['destination'] = ''.join([bin(int(x) + 256)[3:] for x in self.destination.split('.')])
+                return addresses
+        except (InvalidBinary, InvalidIp):
+            abort(400)
 
     def get_binary_header(self):
         header = {}

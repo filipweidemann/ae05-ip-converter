@@ -1,44 +1,62 @@
 <template>
   <div>
+    <v-alert
+        v-model="alert"
+        dismissible
+        type="error"
+        color="error"
+      >
+        Die eingegebenen Parameter sind nicht gültig.
+    </v-alert>
     <v-form ref="form" class="header-form" v-model="valid" lazy-validation>
-      <v-text-field
-        v-model="header.version"
-        :counter="1"
-        label="Version"
-        required
-        disabled
-      ></v-text-field>
+      <div class="header-form__column">
+        <v-text-field
+          v-model="header.version"
+          :counter="1"
+          class="form__input"
+          label="Version"
+          required
+          disabled
+        ></v-text-field>
 
-      <v-text-field
-        v-model="header.tos"
-        label="TOS"
-        required
-        disabled
-      ></v-text-field>
+        <v-text-field
+          v-model="header.tos"
+          class="form__input"
+          label="TOS"
+          required
+          disabled
+        ></v-text-field>
+      </div>
 
-      <v-text-field
-        v-model="header.identifier"
-        label="Kennung"
-        required
-        disabled
-      ></v-text-field>
+      <div class="header-form__column">
+        <v-text-field
+          v-model="header.identifier"
+          class="form__input"
+          label="Kennung"
+          required
+          disabled
+        ></v-text-field>
 
-      <v-text-field
-        v-model="header.flags"
-        label="Flags"
-        required
-        disabled
-      ></v-text-field>
+        <v-text-field
+          v-model="header.flags"
+          class="form__input"
+          label="Flags"
+          required
+          disabled
+        ></v-text-field>
 
-      <v-text-field
-        v-model="header.offset"
-        label="Fragment Offset"
-        required
-        disabled
-      ></v-text-field>
+        <v-text-field
+          v-model="header.offset"
+          class="form__input"
+          label="Fragment Offset"
+          required
+          disabled
+        ></v-text-field>
+      </div>
 
       <v-text-field
         v-model="header.ttl"
+        class="form__input"
         label="TTL"
         required
         disabled
@@ -46,32 +64,54 @@
 
       <v-text-field
         v-model="header.protocol"
+        class="form__input"
         label="Protokol"
         required
         disabled
       ></v-text-field>
 
-      <v-text-field
-        v-model="header.source"
-        :rules="ipRules"
-        :counter="15"
-        label="Source IP"
-        required
-      ></v-text-field>
+      <div class="header-form__column">
+        <v-text-field
+          v-model="header.source"
+          :rules="ipRules"
+          :counter="15"
+          class="form__input"
+          label="Source IP"
+          required
+        ></v-text-field>
 
-      <v-text-field
-        v-model="header.destination"
-        :rules="ipRules"
-        :counter="15"
-        label="Destination IP"
-        required
-      ></v-text-field>
+        <v-text-field
+          v-model="header.destination"
+          :rules="ipRules"
+          :counter="15"
+          class="form__input"
+          label="Destination IP"
+          required
+        ></v-text-field>
+      </div>
 
       <v-text-field
         v-model="header.checksum"
+        class="form__input"
         label="Checksum"
         disabled
       ></v-text-field>
+
+      <div class="header-form__column">
+        <v-text-field
+          v-model="header.ihl"
+          class="form__input"
+          label="IHL"
+          disabled
+        ></v-text-field>
+
+        <v-text-field
+          v-model="header.packetLength"
+          class="form__input"
+          label="Packet Length"
+          disabled
+        ></v-text-field>
+      </div>
 
       <v-btn
         :disabled="!valid"
@@ -106,19 +146,24 @@ export default {
         protocol: '0',
         source: '',
         destination: '',
-        checksum: ''
-      } 
+        checksum: '',
+        ihl: '',
+        packetLength: ''
+      },
+      alert: false
     }
   },
 
   methods: {
     submitForm () {
+      this.alert = false
       this.$api.post('convert-to-binary', this.header)
         .then(response => {
+          console.log(response.data)
           this.$emit('converted', response.data)
         })
         .catch(err => {
-          console.log(err)
+          this.alert = true
         })
     },
 
@@ -133,6 +178,8 @@ export default {
       this.header.source = data.source
       this.header.destination = data.destination
       this.header.checksum = data.checksum
+      this.header.ihl = data.ihl
+      this.header.packetLength = data.packet_length
     }
   }
 }
@@ -158,4 +205,15 @@ a {
 .header-form {
   width: 500px;
 }
+
+.header-form__column {
+  display: flex;
+  flex-direction: row;
+  width: 500px;
+}
+
+.form__input {
+  padding: 10px;
+}
+
 </style>

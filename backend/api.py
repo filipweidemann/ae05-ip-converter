@@ -1,6 +1,7 @@
-from flask import Flask, request
+from flask import Flask, request, abort
 from flask_restful import Resource, Api
 from flask_cors import CORS
+from exceptions import InvalidIp, InvalidBinary, MissingFields
 from models import IPHeader
 from factories import create_ip_header
 from helper import header_to_dict
@@ -14,10 +15,14 @@ class ConvertToString(Resource):
         data = request.get_json()
         data['binary'] = True
 
-        header = create_ip_header(data)
+        try:
+            header = create_ip_header(data)
+        except MissingFields:
+            abort(400)
 
         header.calculate_checksum()
         header.calculate_ihl()
+        header.calculate_packet_length()
 
         converted = header.convert()
 
@@ -31,10 +36,14 @@ class ConvertToBinary(Resource):
         data = request.get_json()
         data['binary'] = False
 
-        header = create_ip_header(data)
+        try:
+            header = create_ip_header(data)
+        except MissingFields:
+            abort(400)
 
         header.calculate_ihl()
         header.calculate_checksum()
+        header.calculate_packet_length()
 
         converted = header.convert()
 
