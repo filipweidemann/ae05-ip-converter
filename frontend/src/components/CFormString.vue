@@ -21,20 +21,20 @@
 
         <v-text-field
           v-model="header.tos"
+          :rules="tosRules"
           class="form__input"
           label="TOS"
           required
-          disabled
         ></v-text-field>
       </div>
 
       <div class="header-form__column">
         <v-text-field
           v-model="header.identifier"
+          :rules="identifierRules"
           class="form__input"
           label="Kennung"
           required
-          disabled
         ></v-text-field>
 
         <v-text-field
@@ -59,7 +59,6 @@
         class="form__input"
         label="TTL"
         required
-        disabled
       ></v-text-field>
 
       <v-text-field
@@ -136,6 +135,26 @@ export default {
         v => !!v || 'IP is required',
         v => (v && v.length <= 15 && v.length >= 7) || 'IP adresses have a maximum of 15 characters.'
       ],
+      tosRules: [
+        v => !!v || 'TOS is required',
+        v => (v <= 256 && v >= 0) || 'TOS field needs to be between 0 and 256'
+      ],
+      identifierRules: [
+        v => !!v || 'Identifier is required',
+        v => (v <= 65536 && v >= 0) || 'Identifier field needs to be between 0 and 65536'
+      ],
+      ttlRules: [
+        v => !!v || 'TTL field is required',
+        v => (v <= 256 && v >= 0) || 'TTL needs to be between 0 and 256'
+      ],
+      protocolRules: [
+        v => !!v || 'Protocol is required',
+        v => (v <= 256 && v >= 0) || 'Protocol needs to be between 0 and 256'
+      ],
+      offsetRules: [
+        v => !!v || 'Offset is required',
+        v => (v <= 8192 && v >= 0) || 'Offset needs to be between 0 and 8192'
+      ],
       header: {
         version: '4',
         tos: '24',
@@ -157,6 +176,11 @@ export default {
   methods: {
     submitForm () {
       this.alert = false
+      
+      if (!this.$refs.form.validate()) {
+        return
+      }
+
       this.$api.post('convert-to-binary', this.header)
         .then(response => {
           console.log(response.data)

@@ -20,13 +20,15 @@ class ConvertToString(Resource):
         except MissingFields:
             abort(400)
 
-        header.calculate_checksum()
-        header.calculate_ihl()
-        header.calculate_packet_length()
+        try:
+            header.calculate_checksum()
+            header.calculate_ihl()
+            header.calculate_packet_length()
 
-        converted = header.convert()
-
-        header_final = header_to_dict(converted)
+            converted = header.convert()
+            header_final = header_to_dict(converted)
+        except ValueError:
+            abort(400)
 
         return header_final
 
@@ -41,13 +43,15 @@ class ConvertToBinary(Resource):
         except MissingFields:
             abort(400)
 
-        header.calculate_ihl()
-        header.calculate_checksum()
-        header.calculate_packet_length()
+        try:
+            header.calculate_ihl()
+            header.calculate_checksum()
+            header.calculate_packet_length()
 
-        converted = header.convert()
-
-        header_final = header_to_dict(converted)
+            converted = header.convert()
+            header_final = header_to_dict(converted)
+        except ValueError:
+            abort(400)
 
         return header_final
 

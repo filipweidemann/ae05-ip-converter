@@ -21,20 +21,20 @@
 
         <v-text-field
           v-model="header.tos"
+          :counter="8"
           class="form__input"
           label="TOS"
           required
-          disabled
         ></v-text-field>
       </div>
 
       <div class="header-form__column">
         <v-text-field
           v-model="header.identifier"
+          :counter="16"
           class="form__input"
           label="Kennung"
           required
-          disabled
         ></v-text-field>
 
         <v-text-field
@@ -47,27 +47,27 @@
 
         <v-text-field
           v-model="header.offset"
+          :counter="13"
           class="form__input"
           label="Fragment Offset"
           required
-          disabled
         ></v-text-field>
       </div>
 
       <v-text-field
         v-model="header.ttl"
+        :counter="8"
         class="form__input"
         label="TTL"
         required
-        disabled
       ></v-text-field>
 
       <v-text-field
         v-model="header.protocol"
+        :counter="8"
         class="form__input"
         label="Protokol"
         required
-        disabled
       ></v-text-field>
 
       <v-text-field
@@ -153,6 +153,11 @@ export default {
   methods: {
     submitForm () {
       this.alert = false
+
+      if (!this.$refs.form.validate()) {
+        return
+      }
+      
       this.$api.post('convert-to-string', this.header)
         .then(response => {
           console.log(response)
