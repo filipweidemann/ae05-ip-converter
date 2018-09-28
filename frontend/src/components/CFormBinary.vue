@@ -157,13 +157,13 @@ export default {
       if (!this.$refs.form.validate()) {
         return
       }
-      
+
       this.$api.post('convert-to-string', this.header)
         .then(response => {
           console.log(response)
           this.$emit('converted', response.data)
         })
-        .catch(err => {
+        .catch(() => {
           this.alert = true
         })
     },

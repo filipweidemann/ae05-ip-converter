@@ -176,7 +176,7 @@ export default {
   methods: {
     submitForm () {
       this.alert = false
-      
+
       if (!this.$refs.form.validate()) {
         return
       }
@@ -186,7 +186,7 @@ export default {
           console.log(response.data)
           this.$emit('converted', response.data)
         })
-        .catch(err => {
+        .catch(() => {
           this.alert = true
         })
     },
