@@ -1,5 +1,5 @@
 import textwrap
-from exceptions import InvalidIp, InvalidBinary
+from exceptions import InvalidIp, InvalidBinary, MissingFields
 from flask import abort
 
 class IPHeader:
@@ -224,24 +224,34 @@ class IPHeader:
 
             return header
 
+    @classmethod
+    def create(cls, data):
+        required_fields = [
+            'version',
+            'tos',
+            'identifier',
+            'flags',
+            'offset',
+            'ttl',
+            'protocol',
+            'source',
+            'destination',
+            'binary'
+        ]
 
-if __name__ == '__main__':
-    header = IPHeader(
-        version='4',
-        tos='0',
-        identifier='0',
-        flags='010',
-        offset='0',
-        ttl='128',
-        protocol='0',
-        source='1.1.1.1',
-        destination='1.1.1.2',
-        binary=False
-    )
+        for key in required_fields:
+            if not key in list(data.keys()):
+                raise MissingFields()
 
-    checksum = header.calculate_checksum()
-    ihl = header.calculate_ihl()
-
-    converted = header.convert()
-
-    print(converted.checksum)
+        return IPHeader(
+            version=data['version'],
+            tos=data['tos'],
+            identifier=data['identifier'],
+            flags=data['flags'],
+            offset=data['offset'],
+            ttl=data['ttl'],
+            protocol=data['protocol'],
+            source=data['source'],
+            destination=data['destination'],
+            binary=data['binary']
+        )

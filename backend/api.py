@@ -1,9 +1,8 @@
 from flask import Flask, request, abort
 from flask_restful import Resource, Api
 from flask_cors import CORS
-from exceptions import InvalidIp, InvalidBinary, MissingFields
+from exceptions import MissingFields
 from models import IPHeader
-from factories import create_ip_header
 from helper import header_to_dict
 
 app = Flask(__name__)
@@ -16,7 +15,7 @@ class ConvertToString(Resource):
         data['binary'] = True
 
         try:
-            header = create_ip_header(data)
+            header = IPHeader.create(data)
         except MissingFields:
             abort(400)
 
@@ -39,7 +38,7 @@ class ConvertToBinary(Resource):
         data['binary'] = False
 
         try:
-            header = create_ip_header(data)
+            header = IPHeader.create(data)
         except MissingFields:
             abort(400)
 
