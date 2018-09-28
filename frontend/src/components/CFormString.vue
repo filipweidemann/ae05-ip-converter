@@ -47,10 +47,10 @@
 
         <v-text-field
           v-model="header.offset"
+          :rules="offsetRules"
           class="form__input"
           label="Fragment Offset"
           required
-          disabled
         ></v-text-field>
       </div>
 
@@ -63,10 +63,10 @@
 
       <v-text-field
         v-model="header.protocol"
+        :rules="protocolRules"
         class="form__input"
         label="Protokol"
         required
-        disabled
       ></v-text-field>
 
       <div class="header-form__column">
@@ -157,12 +157,12 @@ export default {
       ],
       header: {
         version: '4',
-        tos: '24',
-        identifier: '0',
+        tos: '',
+        identifier: '',
         flags: '010',
-        offset: '0',
-        ttl: '128',
-        protocol: '0',
+        offset: '',
+        ttl: '',
+        protocol: '',
         source: '',
         destination: '',
         checksum: '',
