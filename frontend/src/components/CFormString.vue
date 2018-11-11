@@ -124,7 +124,6 @@
 </template>
 
 <script>
-import api from '@/api'
 import rules from '@/stringRules'
 
 export default {
@@ -169,7 +168,6 @@ export default {
 
       this.$api.post('convert-to-binary', this.header)
         .then(response => {
-          console.log(response.data)
           this.$emit('converted', response.data)
         })
         .catch(() => {

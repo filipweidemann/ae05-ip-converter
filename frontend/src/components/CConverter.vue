@@ -30,7 +30,6 @@
 </template>
 
 <script>
-import api from '@/api'
 import CFormString from '@/components/CFormString'
 import CFormBinary from '@/components/CFormBinary'
 
