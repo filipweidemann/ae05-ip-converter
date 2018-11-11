@@ -4,7 +4,7 @@
 
 ### Frontend
 
-You will need `yarn`.
+You will need [yarn](https://yarnpkg.com/en/docs/install).
 
 - `cd frontend`
 - `yarn`
@@ -12,7 +12,7 @@ You will need `yarn`.
 
 ### Backend
 
-You will need Python 3 and pipenv to handle package managing.
+You will need Python 3 and [pipenv](https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv) to handle package managing.
 
 - `cd backend`
 - `pipenv install`
