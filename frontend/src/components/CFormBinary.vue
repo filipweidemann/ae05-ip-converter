@@ -21,6 +21,7 @@
 
         <v-text-field
           v-model="header.tos"
+          :rules="tosRules"
           :counter="8"
           class="form__input"
           label="TOS"
@@ -31,6 +32,7 @@
       <div class="header-form__column">
         <v-text-field
           v-model="header.identifier"
+          :rules="identifierRules"
           :counter="16"
           class="form__input"
           label="Kennung"
@@ -47,6 +49,7 @@
 
         <v-text-field
           v-model="header.offset"
+          :rules="offsetRules"
           :counter="13"
           class="form__input"
           label="Fragment Offset"
@@ -56,6 +59,7 @@
 
       <v-text-field
         v-model="header.ttl"
+        :rules="ttlRules"
         :counter="8"
         class="form__input"
         label="TTL"
@@ -64,6 +68,7 @@
 
       <v-text-field
         v-model="header.protocol"
+        :rules="protocolRules"
         :counter="8"
         class="form__input"
         label="Protokol"
@@ -121,6 +126,7 @@
 
 <script>
 import api from '@/api'
+import rules from '@/binaryRules'
 
 export default {
   name: 'CFormBinary',
@@ -129,10 +135,14 @@ export default {
     return {
       alert: false,
       valid: false,
-      ipRules: [
-        v => !!v || 'IP is required',
-        v => (v && v.length == 32) || 'IP adresses contain 32 bits.'
-      ],
+
+      tosRules: rules.tosRules,
+      identifierRules: rules.identifierRules,
+      offsetRules: rules.offsetRules,
+      ttlRules: rules.ttlRules,
+      protocolRules: rules.protocolRules,
+      ipRules: rules.ipRules,
+      
       header: {
         version: '100',
         tos: '',

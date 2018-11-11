@@ -56,6 +56,7 @@
 
       <v-text-field
         v-model="header.ttl"
+        :rules="ttlRules"
         class="form__input"
         label="TTL"
         required
@@ -124,7 +125,7 @@
 
 <script>
 import api from '@/api'
-import rules from '@/rules'
+import rules from '@/stringRules'
 
 export default {
   name: 'CFormString',
@@ -132,12 +133,14 @@ export default {
   data () {
     return {
       valid: false,
+
       tosRules: rules.tosRules,
       identifierRules: rules.identifierRules,
       offsetRules: rules.offsetRules,
+      ttlRules: rules.ttlRules,
       protocolRules: rules.protocolRules,
       ipRules: rules.ipRules,
-      
+
       header: {
         version: '4',
         tos: '',
